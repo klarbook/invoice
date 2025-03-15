@@ -3,6 +3,7 @@ import { ForwardIcon, ArrowLeftIcon, PlusIcon, Trash2Icon, SaveIcon, BadgePlusIc
 import { uuidv7 } from "uuidv7"
 import { LexoRank } from "lexorank"
 import * as pdfjs from "pdfjs-dist"
+// import the worker from /pdfjs/build/pdf.worker.js
 
 const { data: contacts, refresh: refreshContacts } = await useFetch("/api/contacts")
 const { data: organisation } = await useFetch("/api/organisation")
@@ -100,12 +101,20 @@ async function contactCreate() {
 
 // Preview of invoice data
 
-const previewUrl = ref("")
+const pdfContainer = useTemplateRef("pdfContainer")
+
+pdfjs.GlobalWorkerOptions.workerSrc = "/build/pdf.worker.min.mjs"
 
 watchDebounced(
   data,
   async () => {
     console.log("data changed")
+
+    // Check if the container exists before proceeding
+    if (!pdfContainer.value) {
+      console.error("PDF container element not found")
+      return
+    }
 
     // post request to /api/invoices/preview
     const response = await $fetch("/api/invoices/preview", {
@@ -118,8 +127,48 @@ watchDebounced(
       },
     })
 
-    // response is of type pdf, generate a local url for the preview
-    previewUrl.value = URL.createObjectURL(response)
+    // response is of type blob application/pdf
+    const pdf = response
+
+    console.log(pdf)
+
+    try {
+      // Convert the Blob to ArrayBuffer
+      const arrayBuffer = await pdf.arrayBuffer()
+
+      // use pdfjs to render the pdf
+      const pdfDoc = await pdfjs.getDocument({ data: arrayBuffer }).promise
+
+      // Clear the container before rendering new pages
+      pdfContainer.value.innerHTML = ""
+
+      // Render each page
+      for (let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++) {
+        const page = await pdfDoc.getPage(pageNum)
+
+        // Create a canvas for each page
+        const canvas = document.createElement("canvas")
+        const context = canvas.getContext("2d")
+
+        // Set the scale for rendering
+        const viewport = page.getViewport({ scale: 2 })
+        canvas.height = viewport.height
+        canvas.width = viewport.width
+
+        // Render the page
+        const renderContext = {
+          canvasContext: context,
+          viewport: viewport,
+        }
+
+        await page.render(renderContext).promise
+
+        // Append the canvas to the container
+        pdfContainer.value.appendChild(canvas)
+      }
+    } catch (error) {
+      console.error("Error rendering PDF:", error)
+    }
   },
   { deep: true, debounce: 250 },
 )
@@ -189,8 +238,8 @@ watchDebounced(
           </div>
         </div>
       </div>
-      <div v-if="previewUrl" class="h-full overflow-scroll p-4">
-        <iframe :src="previewUrl" frameborder="0" class="h-full w-full"></iframe>
+      <div class="h-full overflow-scroll p-4">
+        <div ref="pdfContainer" class="h-full w-full [&>*]:h-full [&>*]:w-full [&>*]:object-contain"></div>
       </div>
     </div>
 
