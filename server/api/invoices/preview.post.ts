@@ -1,4 +1,4 @@
-import { contacts, invoiceItems, invoices, organisations } from "~~/server/database/schema"
+import { contacts, organisations } from "~~/server/database/schema"
 import { readFile } from "fs/promises"
 import { z } from "zod"
 

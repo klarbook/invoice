@@ -61,7 +61,7 @@ async function backgroundProcessEmail({ email }: { email: string }) {
   const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24)
 
   // Set the reset password token and expiration date
-  await useDrizzle().update(users).set({ resetPasswordToken: passwordResetToken, resetPasswordExpiresAt: expiresAt }).where(eq(users.id, user.id))
+  await useDrizzle().update(users).set({ resetPasswordToken: passwordResetToken, resetPasswordTokenValidUntil: expiresAt }).where(eq(users.id, user.id))
 
   try {
     const emailResult = await postmark.sendEmail({
