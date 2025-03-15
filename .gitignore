@@ -31,3 +31,6 @@ database.sqlite3
 
 # Ignore storage
 storage/
+.trigger
+
+tmp
