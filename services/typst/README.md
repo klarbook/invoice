@@ -1,4 +1,4 @@
-# TypstAPI
+# typst
 
 A secure HTTP API service to render [Typst](https://typst.app/) templates with JSON data.
 
@@ -26,6 +26,7 @@ chmod +x setup.sh
 ```
 
 This will:
+
 - Install dependencies
 - Build the Typst renderer Docker image
 - Create necessary directories
@@ -38,7 +39,7 @@ Alternatively, you can do the setup manually:
 bun install
 
 # Build Docker image
-docker build -t typstapi-renderer -f Dockerfile .
+docker build -t typst-renderer -f Dockerfile .
 
 # Create data directory
 mkdir -p data
@@ -53,6 +54,7 @@ docker-compose up -d
 ```
 
 This will:
+
 - Build the API service container
 - Start the API service on port 3000
 
@@ -67,7 +69,7 @@ bun run dev
 If you encounter a "no such container" error, make sure the Typst renderer Docker image is built:
 
 ```bash
-docker build -t typstapi-renderer -f Dockerfile .
+docker build -t typst-renderer -f Dockerfile .
 ```
 
 ## API Endpoints
@@ -111,9 +113,9 @@ Content: #data.content
 curl -X POST http://localhost:3001/render \
   -H "Content-Type: application/json" \
   -d '{
-    "template": "#let data = json(\"data.json\")\n\n= #data.title\n\n#data.content", 
+    "template": "#let data = json(\"data.json\")\n\n= #data.title\n\n#data.content",
     "data": {
-      "title": "My Document", 
+      "title": "My Document",
       "content": "Hello, world!"
     }
   }' \
@@ -137,7 +139,7 @@ Returns the current status of the rendering service.
 
 Health check endpoint.
 
-**Response**: 
+**Response**:
 
 "OK" with status code 200 if the service is running.
 

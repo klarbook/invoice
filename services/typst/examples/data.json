@@ -1,7 +1,7 @@
 {
   "title": "Sample Document",
-  "author": "TypstAPI User",
-  "content": "This is a sample document generated using the TypstAPI service. Typst is a modern markup-based typesetting system designed for technical and scientific documents.",
+  "author": "typst User",
+  "content": "This is a sample document generated using the typst service. Typst is a modern markup-based typesetting system designed for technical and scientific documents.",
   "table": {
     "columns": ["Name", "Value", "Description"],
     "rows": [

@@ -1,6 +1,6 @@
-# TypstAPI Examples
+# typst Examples
 
-This directory contains examples for using the TypstAPI service.
+This directory contains examples for using the typst service.
 
 ## Files
 
@@ -29,6 +29,7 @@ chmod +x render.sh
 ## Dependencies
 
 The bash script requires:
+
 - `jq` for JSON processing
 - `curl` for making HTTP requests
 

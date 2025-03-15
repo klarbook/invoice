@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "Setting up TypstAPI service..."
+echo "Setting up typst service..."
 
 # Install dependencies
 echo "Installing dependencies..."

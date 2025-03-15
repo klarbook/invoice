@@ -2,7 +2,7 @@
   "lockfileVersion": 1,
   "workspaces": {
     "": {
-      "name": "typstapi",
+      "name": "typst",
       "dependencies": {
         "dockerode": "^4.0.0",
         "nanoid": "^5.0.4",

@@ -5,7 +5,7 @@ async function main() {
   const template = `#set document(title: "Test Document")
 #set page(margin: 2cm)
 
-= Hello from TypstAPI!
+= Hello from typst!
 
 This document was rendered successfully.`;
 

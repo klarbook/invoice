@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "Starting TypstAPI server..."
+echo "Starting typst server..."
 cd "$(dirname "$0")"
 
 # Check if server is already running
