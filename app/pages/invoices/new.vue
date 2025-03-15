@@ -2,6 +2,7 @@
 import { ForwardIcon, ArrowLeftIcon, PlusIcon, Trash2Icon, SaveIcon, BadgePlusIcon } from "lucide-vue-next"
 import { uuidv7 } from "uuidv7"
 import { LexoRank } from "lexorank"
+import * as pdfjs from "pdfjs-dist"
 
 const { data: contacts, refresh: refreshContacts } = await useFetch("/api/contacts")
 const { data: organisation } = await useFetch("/api/organisation")
@@ -38,7 +39,15 @@ function removeLineItem(id: string) {
 }
 
 async function invoiceCreate() {
-  await navigateTo("/invoices/new")
+  await $fetch("/api/invoices", {
+    method: "POST",
+    body: {
+      recipientId: recipientId.value,
+      invoiceDate: invoiceDate.value,
+      dueDate: dueDate.value,
+      lineItems: lineItems.value,
+    },
+  })
 }
 
 // Preview of invoice data
@@ -88,6 +97,32 @@ async function contactCreate() {
   await refreshContacts()
   modalContact.value = false
 }
+
+// Preview of invoice data
+
+const previewUrl = ref("")
+
+watchDebounced(
+  data,
+  async () => {
+    console.log("data changed")
+
+    // post request to /api/invoices/preview
+    const response = await $fetch("/api/invoices/preview", {
+      method: "POST",
+      body: {
+        recipientId: recipientId.value,
+        invoiceDate: invoiceDate.value,
+        dueDate: dueDate.value,
+        lineItems: lineItems.value,
+      },
+    })
+
+    // response is of type pdf, generate a local url for the preview
+    previewUrl.value = URL.createObjectURL(response)
+  },
+  { deep: true, debounce: 250 },
+)
 </script>
 
 <template>
@@ -101,8 +136,8 @@ async function contactCreate() {
       </template>
     </DHeader>
 
-    <div class="grid grid-cols-2 divide-x divide-neutral-200">
-      <div class="flex flex-col gap-4 overflow-scroll p-6">
+    <div class="grid h-full grid-cols-2 divide-x divide-neutral-200">
+      <div class="flex h-full flex-col gap-4 overflow-scroll p-6">
         <div class="flex flex-col gap-1">
           <DLabel>Recipient</DLabel>
           <div class="flex gap-1">
@@ -154,8 +189,8 @@ async function contactCreate() {
           </div>
         </div>
       </div>
-      <div class="h-full overflow-scroll p-4">
-        <pre class="overflow-auto text-xs">{{ data }}</pre>
+      <div v-if="previewUrl" class="h-full overflow-scroll p-4">
+        <iframe :src="previewUrl" frameborder="0" class="h-full w-full"></iframe>
       </div>
     </div>
 
