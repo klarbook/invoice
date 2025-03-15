@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./data:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - NODE_ENV=production
+      - MAX_CONCURRENT_RENDERS=10
+      - PORT=3001
+    restart: unless-stopped
+    depends_on:
+      - typst-image-puller
+
+  # This service just ensures the Typst image is pulled before starting the API
+  typst-image-puller:
+    image: docker
+    command: ["pull", "ghcr.io/typst/typst:latest"]
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock

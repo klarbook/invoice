@@ -1,0 +1,24 @@
+FROM debian:bookworm-slim
+
+RUN apt-get update && apt-get install -y \
+    curl \
+    ca-certificates \
+    fontconfig \
+    --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Typst
+RUN curl -fsSL https://get.typst.org/install.sh | sh
+
+# Create working directory
+WORKDIR /workdir
+
+# Copy and set permissions on entrypoint script before switching to non-root user
+COPY entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# Create non-root user for better security
+RUN useradd -m typstuser
+USER typstuser
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

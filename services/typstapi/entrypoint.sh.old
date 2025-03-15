@@ -1,0 +1,41 @@
+#!/bin/sh
+set -e
+
+# This script expects:
+# - Template file is mounted at /workdir/template.typ
+# - Data file is mounted at /workdir/data.json
+# - Output will be written to /workdir/output.pdf
+
+# Check if files exist
+if [ ! -f /workdir/template.typ ]; then
+  echo "Error: template.typ file not found"
+  exit 1
+fi
+
+if [ ! -f /workdir/data.json ]; then
+  echo "Error: data.json file not found"
+  exit 1
+fi
+
+# Render the document
+echo "Rendering document..."
+
+# Use the correct path to typst
+if [ -x "/root/.local/bin/typst" ]; then
+  TYPST_BIN="/root/.local/bin/typst"
+elif [ -x "/usr/local/bin/typst" ]; then
+  TYPST_BIN="/usr/local/bin/typst"
+elif [ -x "$(which typst)" ]; then
+  TYPST_BIN="$(which typst)"
+else
+  echo "Error: typst binary not found"
+  exit 1
+fi
+
+# Run typst (JSON will be read directly from the file)
+$TYPST_BIN compile \
+  --root /workdir \
+  /workdir/template.typ \
+  /workdir/output.pdf
+
+echo "Rendering complete!"
