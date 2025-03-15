@@ -4,8 +4,10 @@
   "type": "module",
   "private": true,
   "scripts": {
+    "setup-fonts": "./setup-fonts.sh",
     "start": "bun run index.ts",
-    "dev": "bun --watch run index.ts"
+    "dev": "./setup-fonts.sh && bun --watch run index.ts",
+    "prestart": "./setup-fonts.sh"
   },
   "dependencies": {
     "nanoid": "^5.0.4",

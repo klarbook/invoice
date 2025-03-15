@@ -90,8 +90,9 @@ async function renderDocument(templateContent: string, jsonData: any): Promise<{
     const proc = Bun.spawn([
       "docker", "run", "--rm",
       "-v", `${jobDir}:/workdir`,
+      "-v", `${process.cwd()}/resources/formats/typst/fonts:/fonts`,
       "ghcr.io/typst/typst:latest",
-      "compile", "/workdir/template.typ", "/workdir/output.pdf"
+      "compile", "/workdir/template.typ", "--font-path", "/fonts", "/workdir/output.pdf"
     ]);
     
     // Capture stdout, stderr, and exit code

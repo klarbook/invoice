@@ -75,8 +75,6 @@ export default defineEventHandler(async (event) => {
     }),
   })
 
-  console.log(response)
-
   const pdf = await response.arrayBuffer()
 
   return new Response(pdf, { headers: { "Content-Type": "application/pdf" } })

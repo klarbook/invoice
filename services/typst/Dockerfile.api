@@ -12,6 +12,23 @@ COPY . .
 # Create data directory for temporary files
 RUN mkdir -p /app/data && chmod 755 /app/data
 
+# Install font dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    fontconfig \
+    wget \
+    unzip \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create fonts directory
+RUN mkdir -p /app/resources/formats/typst/fonts
+
+# Download and install Inter font (static versions)
+RUN wget -q https://github.com/rsms/inter/releases/download/v3.19/Inter-3.19.zip && \
+    unzip Inter-3.19.zip -d /tmp/inter && \
+    cp "/tmp/inter/Inter Hinted for Windows/Desktop/Inter-"*.ttf /app/resources/formats/typst/fonts/ && \
+    rm -rf /tmp/inter Inter-3.19.zip && \
+    fc-cache -fv
+
 EXPOSE 3000
 
 CMD ["bun", "start"]
